@@ -7,6 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const roleSelect = document.getElementById('role');
     const donorTypeWrapper = document.getElementById('donorTypeWrapper');
     const donorTypeSelect = document.getElementById('donorType');
+    const fssaiWrapper = document.getElementById('fssaiWrapper');
+    const fssaiInput = document.getElementById('fssaiLicense');
     const togglePasswordBtn = document.getElementById('togglePassword');
     const signupBtn = document.getElementById('signupBtn');
     const notification = document.getElementById('notification');
@@ -16,12 +18,28 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Event Listeners ---
     signupForm.addEventListener('submit', handleSignup);
     togglePasswordBtn.addEventListener('click', togglePasswordVisibility);
-    // Show/hide the donor type dropdown based on role selection
+    // Show/hide the donor type dropdown and FSSAI field based on role/donorType
     roleSelect.addEventListener('change', () => {
         if (roleSelect.value === 'donor') {
             donorTypeWrapper.style.display = 'block';
+            // Reset donorType selection and hide FSSAI whenever role changes to donor
+            donorTypeSelect.value = '';
+            fssaiWrapper.style.display = 'none';
+            fssaiInput.value = '';
         } else {
             donorTypeWrapper.style.display = 'none';
+            fssaiWrapper.style.display = 'none';
+            fssaiInput.value = '';
+        }
+    });
+
+    // Toggle FSSAI field when donor type changes
+    donorTypeSelect.addEventListener('change', () => {
+        if (donorTypeSelect.value === 'regular') {
+            fssaiWrapper.style.display = 'block';
+        } else {
+            fssaiWrapper.style.display = 'none';
+            fssaiInput.value = '';
         }
     });
 
@@ -42,7 +60,27 @@ document.addEventListener('DOMContentLoaded', () => {
         // Construct the payload to send to the backend
         const payload = { name, email, password, role };
         if (role === 'donor') {
-            payload.donorType = donorTypeSelect.value;
+            const selectedDonorType = donorTypeSelect.value;
+            if (!selectedDonorType) {
+                showNotification('Please select a donor type.', 'error');
+                return;
+            }
+            payload.donorType = selectedDonorType;
+            if (selectedDonorType === 'regular') {
+                const rawFssai = fssaiInput.value || '';
+                const fssai = rawFssai.replace(/[\s-]/g, '').trim();
+                if (!fssai) {
+                    showNotification('FSSAI License Number is required for Regular donors / restaurants.', 'error');
+                    fssaiInput.focus();
+                    return;
+                }
+                if (!/^\d{14}$/.test(fssai)) {
+                    showNotification('Please enter a valid 14-digit FSSAI License Number.', 'error');
+                    fssaiInput.focus();
+                    return;
+                }
+                payload.fssaiLicense = fssai;
+            }
         }
 
         setLoading(true);

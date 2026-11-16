@@ -113,7 +113,69 @@
     </div>
     
     <div id="userDetailsModal" class="modal">
-        <div class="modal-content"><header class="modal-header"><h2>User Details</h2><button class="close-btn">&times;</button></header><div class="modal-body"><p><strong>Name:</strong> <span id="modalUserName"></span></p><p><strong>Email:</strong> <span id="modalUserEmail"></span></p><p><strong>Role:</strong> <span id="modalUserRole"></span></p><p><strong>Status:</strong> <span id="modalUserStatus"></span></p></div><footer class="modal-footer"><button id="rejectUserBtn" class="btn btn-danger">Reject</button><button id="approveUserBtn" class="btn btn-primary">Approve</button></footer></div>
+        <div class="modal-content">
+            <header class="modal-header">
+                <h2>User Details</h2>
+                <button class="close-btn">&times;</button>
+            </header>
+            <div class="modal-body">
+                <div class="modal-detail-row">
+                    <span class="modal-label"><i class="fas fa-user"></i> Name</span>
+                    <span id="modalUserName" class="modal-value"></span>
+                </div>
+                <div class="modal-detail-row">
+                    <span class="modal-label"><i class="fas fa-envelope"></i> Email</span>
+                    <span id="modalUserEmail" class="modal-value"></span>
+                </div>
+                <div class="modal-detail-row">
+                    <span class="modal-label"><i class="fas fa-id-badge"></i> Role</span>
+                    <span id="modalUserRole" class="modal-value"></span>
+                </div>
+                <div class="modal-detail-row" id="modalDonorTypeRow" style="display:none;">
+                    <span class="modal-label"><i class="fas fa-tag"></i> Donor Type</span>
+                    <span id="modalDonorType" class="modal-value"></span>
+                </div>
+                <div class="modal-detail-row">
+                    <span class="modal-label"><i class="fas fa-circle-dot"></i> Status</span>
+                    <span id="modalUserStatus" class="modal-value"></span>
+                </div>
+
+                <!-- FSSAI section — shown for all donors -->
+                <div id="modalFssaiRow" style="display:none; margin-top: 18px;">
+
+                    <!-- Case 1: license number was provided -->
+                    <div id="modalFssaiBox" class="fssai-verify-box">
+                        <div class="fssai-verify-header">
+                            <i class="fas fa-certificate"></i>
+                            FSSAI License — Verify before approving
+                        </div>
+                        <div class="fssai-license-number" id="modalUserFssai"></div>
+                        <p class="fssai-hint">
+                            <i class="fas fa-info-circle"></i>
+                            Cross-check this number on the official FSSAI portal:
+                            <a href="https://foscos.fssai.gov.in" target="_blank" rel="noopener">
+                                Open FOSCOS &rarr;
+                            </a>
+                        </p>
+                    </div>
+
+                    <!-- Case 2: donor did not submit a license (instant donor) -->
+                    <div id="modalFssaiNone" class="fssai-not-provided">
+                        <i class="fas fa-info-circle"></i>
+                        No FSSAI license submitted — this donor registered as an <strong id="modalFssaiDonorType">Instant Donor</strong>.
+                    </div>
+
+                </div>
+            </div>
+            <footer class="modal-footer">
+                <button id="rejectUserBtn" class="btn btn-danger">
+                    <i class="fas fa-times"></i> Reject
+                </button>
+                <button id="approveUserBtn" class="btn btn-primary">
+                    <i class="fas fa-check"></i> Approve
+                </button>
+            </footer>
+        </div>
     </div>
     <div id="assignTaskModal" class="modal">
         <div class="modal-content"><header class="modal-header"><h2>Assign Donation</h2><button class="close-btn">&times;</button></header><form id="assignTaskForm"><div class="modal-body"><h4>Donation Details</h4><p><strong>Donor:</strong> <span id="modalDonationDonor"></span></p><p><strong>Food:</strong> <span id="modalDonationDesc"></span></p><div class="form-group"><label for="volunteerSelect">Assign to Volunteer:</label><select id="volunteerSelect" required></select></div><div class="form-group"><label for="receiverSelect">Assign to Receiver:</label><select id="receiverSelect" required></select></div></div><footer class="modal-footer"><button type="submit" class="btn btn-primary">Confirm Assignment</button><button type="button" class="btn btn-secondary close-btn">Cancel</button></footer></form></div>

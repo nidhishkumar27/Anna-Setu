@@ -43,18 +43,27 @@
                 <label for="role">Sign up as</label>
                 <select id="role" required>
                     <option value="" disabled selected>Select your role...</option>
-                    <option value="donor">Donor</option>
+                    <option value="donor">Donor (Restaurant, Hotel, Individual)</option>
                     <option value="volunteer">Volunteer</option>
-                    <option value="receiver">Receiver</option>
+                    <option value="receiver">Receiver (NGO, Shelter)</option>
                 </select>
             </div>
 
             <div class="form-group" id="donorTypeWrapper" style="display: none;">
                 <label for="donorType">What type of donor are you?</label>
                 <select id="donorType">
-                    <option value="instant">Instant Donor (for a one-time donation)</option>
-                    <option value="regular">Regular Donor (for an organization)</option>
+                    <option value="" disabled selected>Select donor type...</option>
+                    <option value="regular">Regular Donor (Restaurant / Food Business with FSSAI)</option>
+                    <option value="instant">Instant Donor (One-time donation, no license needed)</option>
                 </select>
+            </div>
+
+            <div class="form-group" id="fssaiWrapper" style="display: none;">
+                <label for="fssaiLicense">FSSAI License Number <span style="color: #e74c3c;">*</span></label>
+                <input type="text" id="fssaiLicense" placeholder="14-digit FSSAI number (e.g. 10012345000123)" maxlength="16" inputmode="numeric">
+                <small style="color: var(--text-muted, #888); font-size: 0.82rem; margin-top: 4px; display: block;">
+                    Mandatory for Restaurants and Regular Donors. Admin verifies this on FOSCOS before approval.
+                </small>
             </div>
 
             <button type="submit" id="signupBtn" class="btn btn-primary">

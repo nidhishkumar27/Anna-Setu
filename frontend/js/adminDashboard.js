@@ -180,8 +180,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             pendingUsersList.innerHTML = pendingUsersData.map(u => `
                 <div class="list-item">
-                    <div class="item-info"><p class="item-title">${u.name}</p><p class="item-meta">${u.email} | Role: ${u.role}</p></div>
-                    <button class="btn btn-secondary" data-user-id="${u._id}" data-action="view-user">View</button>
+                    <div class="item-info">
+                        <p class="item-title">${u.name}</p>
+                        <p class="item-meta">
+                            ${u.email} | Role: ${u.role}
+                            ${u.fssaiLicense ? `<span class="fssai-badge"><i class="fas fa-certificate"></i> FSSAI: ${u.fssaiLicense}</span>` : ''}
+                        </p>
+                    </div>
+                    <button class="btn btn-secondary" data-user-id="${u._id}" data-action="view-user">View & Verify</button>
                 </div>`).join('');
         } catch (error) { pendingUsersList.innerHTML = `<p class="error">${error.message}</p>`; }
     }
@@ -218,7 +224,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="list-item">
                     <div class="item-info">
                         <p class="item-title">${u.name}</p>
-                        <p class="item-meta">${u.email} | Role: ${u.role} | Status: <span class="status-${u.status}">${u.status}</span></p>
+                        <p class="item-meta">
+                            ${u.email} | Role: ${u.role} | Status: <span class="status-${u.status}">${u.status}</span>
+                            ${u.fssaiLicense ? `<span class="fssai-badge"><i class="fas fa-certificate"></i> FSSAI: ${u.fssaiLicense}</span>` : ''}
+                        </p>
                     </div>
                 </div>`).join('');
         } catch (error) { listEl.innerHTML = `<p class="error">${error.message}</p>`; }
@@ -309,10 +318,45 @@ document.addEventListener('DOMContentLoaded', () => {
     function openUserDetailsModalById(userId) {
         const userToDisplay = pendingUsersData.find(u => u._id === userId);
         if (userToDisplay) {
+            console.log('User data from API:', userToDisplay); // debug — check fssaiLicense value here
+
             document.getElementById('modalUserName').textContent = userToDisplay.name;
             document.getElementById('modalUserEmail').textContent = userToDisplay.email;
             document.getElementById('modalUserRole').textContent = userToDisplay.role;
             document.getElementById('modalUserStatus').textContent = userToDisplay.status;
+
+            // Show donor type row
+            const donorTypeRow = document.getElementById('modalDonorTypeRow');
+            if (userToDisplay.role === 'donor' && userToDisplay.donorType) {
+                document.getElementById('modalDonorType').textContent =
+                    userToDisplay.donorType === 'regular' ? 'Regular (Organisation)' : 'Instant (One-time)';
+                donorTypeRow.style.display = 'flex';
+            } else {
+                donorTypeRow.style.display = 'none';
+            }
+
+            const fssaiRow  = document.getElementById('modalFssaiRow');
+            const fssaiBox  = document.getElementById('modalFssaiBox');
+            const fssaiNone = document.getElementById('modalFssaiNone');
+            const fssaiSpan = document.getElementById('modalUserFssai');
+            const license   = (userToDisplay.fssaiLicense || '').trim();
+
+            if (userToDisplay.role === 'donor') {
+                fssaiRow.style.display = 'block';
+                if (license.length > 0) {
+                    fssaiSpan.textContent   = license;
+                    fssaiBox.style.display  = 'block';
+                    fssaiNone.style.display = 'none';
+                } else {
+                    const dtype = userToDisplay.donorType === 'regular' ? 'Regular Donor' : 'Instant Donor';
+                    document.getElementById('modalFssaiDonorType').textContent = dtype;
+                    fssaiBox.style.display  = 'none';
+                    fssaiNone.style.display = 'block';
+                }
+            } else {
+                fssaiRow.style.display = 'none';
+            }
+
             currentUserId = userToDisplay._id;
             userDetailsModal.classList.add('active');
         }

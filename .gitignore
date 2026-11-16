@@ -1,12 +1,24 @@
-# Ignore environment files
+# Environment variables and secrets
 .env
+.env.*
+!.env.example
 
-# Ignore node_modules
+# Dependencies
 node_modules/
 
-# Ignore logs
-logs
+# Logs
+logs/
 *.log
+npm-debug.log*
 
-# Ignore system files
+# Build output
+dist/
+build/
+coverage/
+
+# System files
 .DS_Store
+Thumbs.db
+
+# Editor settings
+.vscode/

@@ -62,8 +62,16 @@ exports.getOpenRequests = async (req, res) => {
 // --- Get all users awaiting approval ---
 exports.getPendingUsers = async (req, res) => {
     try {
-        const pendingUsers = await User.find({ status: 'pending' }).select('-password');
-        res.status(200).json(pendingUsers);
+        const pendingUsers = await User.find({ status: 'pending' })
+            .select('-password')
+            .sort({ createdAt: -1 });
+        // Normalise: always send fssaiLicense as string (empty if not set)
+        const result = pendingUsers.map(u => {
+            const obj = u.toObject();
+            obj.fssaiLicense = obj.fssaiLicense || '';
+            return obj;
+        });
+        res.status(200).json(result);
     } catch (error) {
         res.status(500).json({ message: 'Server error while fetching pending users.', error: error.message });
     }
@@ -76,7 +84,12 @@ exports.getAllUsers = async (req, res) => {
         if (req.query.role) { filter.role = req.query.role; }
         if (req.query.status) { filter.status = req.query.status; }
         const users = await User.find(filter).select('-password').sort({ createdAt: -1 });
-        res.status(200).json(users);
+        const result = users.map(u => {
+            const obj = u.toObject();
+            obj.fssaiLicense = obj.fssaiLicense || '';
+            return obj;
+        });
+        res.status(200).json(result);
     } catch (error) {
         res.status(500).json({ message: 'Server error while fetching all users.', error: error.message });
     }

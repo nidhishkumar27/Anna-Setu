@@ -16,6 +16,10 @@ const UserSchema = new mongoose.Schema({
         state: String,
         zip: String
     },
+    fssaiLicense: {
+        type: String,
+        trim: true,
+    },
     verificationDetails: {
         organizationName: String,
         contactPerson: String,

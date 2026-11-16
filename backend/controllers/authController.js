@@ -3,16 +3,38 @@ const jwt = require('jsonwebtoken');
 const Activity = require('../models/Activity');
 
 exports.registerUser = async (req, res) => {
-    const { name, email, password, role, donorType } = req.body;
+    const { name, email, password, role, donorType, fssaiLicense } = req.body;
     try {
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ message: 'User with this email already exists.' });
         }
-        const newUser = new User({ name, email, password, role, donorType });
+        let cleanedFssai = '';
+        if (role === 'donor') {
+            if (donorType === 'regular') {
+                cleanedFssai = fssaiLicense ? String(fssaiLicense).replace(/[\s-]/g, '').trim() : '';
+                if (!cleanedFssai) {
+                    return res.status(400).json({ message: 'FSSAI License Number is required for Regular donors (restaurants/organisations).' });
+                }
+                if (!/^\d{14}$/.test(cleanedFssai)) {
+                    return res.status(400).json({ message: 'FSSAI License Number must be a valid 14-digit number.' });
+                }
+            }
+        }
+
+        const newUser = new User({
+            name,
+            email,
+            password,
+            role,
+            donorType,
+            fssaiLicense: cleanedFssai || undefined
+        });
+
         if (role === 'donor' && donorType === 'instant') {
             newUser.status = 'approved';
         }
+
         await newUser.save();
         const activity = new Activity({
             text: `${newUser.name} registered as a new ${newUser.role}.`,

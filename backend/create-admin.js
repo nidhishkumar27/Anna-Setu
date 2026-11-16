@@ -39,7 +39,7 @@ async function createAdmin() {
         console.log('✅ Admin user created successfully!');
         console.log('--- Admin Credentials ---');
         console.log(`Email: ${admin.email}`);
-        console.log(`Password: ${process.env.ADMIN_PASSWORD}`);
+        console.log('Password: Configured securely through environment variables.');
         console.log('-------------------------');
 
     } catch (error) {
