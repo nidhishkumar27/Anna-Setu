@@ -1,9 +1,13 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const Activity = require('../models/Activity');
+const SELF_REGISTERABLE_ROLES = ['donor', 'receiver', 'volunteer'];
 
 exports.registerUser = async (req, res) => {
     const { name, email, password, role, donorType, fssaiLicense } = req.body;
+    if (role !== undefined && !SELF_REGISTERABLE_ROLES.includes(role)) {
+        return res.status(400).json({ message: 'Invalid role for public registration.' });
+    }
     try {
         const existingUser = await User.findOne({ email });
         if (existingUser) {

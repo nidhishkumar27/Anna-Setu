@@ -72,6 +72,19 @@ describe('PUT /api/users/me', () => {
     expect(res.body.user.phone).toBe('9876543210');
   });
 
+  test('returns updated profile fields without password or password hash', async () => {
+    const res = await request(app)
+      .put('/api/users/me')
+      .set('Authorization', `Bearer ${userToken}`)
+      .send({ name: 'Secure Profile Name', phone: '9876543210' });
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty('message', 'Profile updated successfully');
+    expect(res.body.user).toMatchObject({ name: 'Secure Profile Name', phone: '9876543210' });
+    expect(res.body.user).not.toHaveProperty('password');
+    expect(res.body.user).not.toHaveProperty('passwordHash');
+  });
+
   test('updates address fields', async () => {
     const res = await request(app)
       .put('/api/users/me')

@@ -29,7 +29,10 @@ exports.updateMyProfile = async (req, res) => {
         }
 
         const updatedUser = await user.save();
-        res.json({ message: 'Profile updated successfully', user: updatedUser });
+        const userResponse = updatedUser.toObject();
+        delete userResponse.password;
+        delete userResponse.verificationDetails;
+        res.json({ message: 'Profile updated successfully', user: userResponse });
     } catch (error) {
         res.status(500).json({ message: 'Server Error' });
     }

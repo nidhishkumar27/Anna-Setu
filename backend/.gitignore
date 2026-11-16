@@ -1,5 +1,7 @@
 # Ignore the folder containing all installed libraries
 node_modules
+test-data/
+tests/performance/reports/
 
 # Ignore the file containing secret keys
 .env
